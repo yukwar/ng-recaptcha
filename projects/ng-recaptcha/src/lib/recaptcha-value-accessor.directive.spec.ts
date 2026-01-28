@@ -1,6 +1,6 @@
 import { Component, NgZone } from "@angular/core";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
-import { UntypedFormControl, UntypedFormGroup, FormsModule, ReactiveFormsModule, Validators } from "@angular/forms";
+import { NgModel, UntypedFormControl, UntypedFormGroup, FormsModule, ReactiveFormsModule, Validators } from "@angular/forms";
 import { By } from "@angular/platform-browser";
 import { BehaviorSubject } from "rxjs";
 
@@ -15,6 +15,7 @@ describe("RecaptchaValueAccessorDirective -> [(ngModel)]", () => {
         <div *ngIf="captcha.pristine" captcha-pristine></div>
       </form>
     `,
+    standalone: false,
   })
   class TestComponent {
     public formModel: { captcha: string | null } = { captcha: null };
@@ -70,24 +71,31 @@ describe("RecaptchaValueAccessorDirective -> [(ngModel)]", () => {
     // Act
     mockRecaptchaLoaderService.grecaptchaMock.emitGrecaptchaResponse("test response");
     fixture.detectChanges();
+    await fixture.whenStable();
 
     mockRecaptchaLoaderService.grecaptchaMock.reset.calls.reset();
-    fixture.componentInstance.formModel.captcha = "";
+    const ngModel = fixture.debugElement.query(By.directive(NgModel)).injector.get(NgModel);
+    ngModel.control.setValue("");
     fixture.detectChanges();
     await fixture.whenStable();
+    fixture.detectChanges();
 
     // Assert
     expect(mockRecaptchaLoaderService.grecaptchaMock.reset).toHaveBeenCalled();
   });
 
-  it("should not reset grecaptcha control upon setting form control value to a truthy value", () => {
+  it("should not reset grecaptcha control upon setting form control value to a truthy value", async () => {
     // Arrange
 
     // Act
     mockRecaptchaLoaderService.grecaptchaMock.reset.calls.reset();
     mockRecaptchaLoaderService.grecaptchaMock.emitGrecaptchaResponse("test response");
     fixture.detectChanges();
-    fixture.componentInstance.formModel.captcha = "some value";
+    await fixture.whenStable();
+    const ngModel = fixture.debugElement.query(By.directive(NgModel)).injector.get(NgModel);
+    ngModel.control.setValue("some value");
+    fixture.detectChanges();
+    await fixture.whenStable();
     fixture.detectChanges();
 
     // Assert
@@ -117,6 +125,7 @@ describe("RecaptchaValueAccessorDirective -> formGroup", () => {
         <re-captcha formControlName="captcha"></re-captcha>
       </form>
     `,
+    standalone: false,
   })
   class TestComponent {
     public loading$ = new BehaviorSubject<boolean>(false);

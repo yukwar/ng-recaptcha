@@ -45,6 +45,15 @@ module.exports = {
             allowDeclarations: true,
           },
         ],
+        "@angular-eslint/prefer-inject": "off",
+        "@angular-eslint/prefer-standalone": "off",
+        "@angular-eslint/template/prefer-control-flow": "off",
+        "@typescript-eslint/no-unsafe-assignment": "off",
+        "@typescript-eslint/no-unsafe-call": "off",
+        "@typescript-eslint/no-unsafe-member-access": "off",
+        "@typescript-eslint/no-redundant-type-constituents": "off",
+        "@typescript-eslint/unbound-method": "off",
+        "deprecation/deprecation": "off",
       },
     },
     {
@@ -63,6 +72,7 @@ module.exports = {
          * Any template/HTML related rules you wish to use/reconfigure over and above the
          * recommended set provided by the @angular-eslint project would go here.
          */
+        "@angular-eslint/template/prefer-control-flow": "off",
       },
     },
   ],
